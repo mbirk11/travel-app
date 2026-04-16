@@ -1,10 +1,11 @@
 from django import forms
-from .models import Task
+from .models import Trip
 
-class TaskForm(forms.ModelForm):
+class TripForm(forms.ModelForm):
     class Meta:
-        model = Task
-        fields = ['title', 'description', 'status', 'deadline']
+        model = Trip
+        fields = ['title', 'description', 'status', 'start_date', 'end_date']
         widgets = {
-            'deadline': forms.DateInput(attrs={'type': 'date'}),
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
         }
