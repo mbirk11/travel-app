@@ -1,10 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}My Profile | Wanderlust{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: 3rem;">
+    <!-- Profile Header -->
+    <div class="glass-card" style="display: flex; align-items: center; gap: 2rem; padding: 3rem;">
+        <div style="width: 100px; height: 100px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 700;">
+            {{ current_user.username|make_list|first|upper }}
+        </div>
+        <div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">{{ current_user.username }}</h1>
+            <p style="color: var(--text-light); font-size: 1.1rem;">Explorer | {{ current_user.email|default:"No email recorded" }}</p>
+        </div>
+        <div style="margin-left: auto; text-align: center; background: rgba(255,255,255,0.5); padding: 1.5rem; border-radius: 1rem;">
+            <p style="font-size: 2rem; font-weight: 700; color: var(--primary);">{{ trips.count }}</p>
+            <p style="color: var(--text-light); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em;">Total Trips</p>
+        </div>
+    </div>
+
+    <!-- User Trips -->
+    <div>
+        <h2 style="margin-bottom: 2rem;">My Adventures</h2>
+        {% if trips %}
+        <div class="grid">
+            {% for trip in trips %}
+            <a href="{% url 'trip_detail' trip.pk %}" class="trip-link">
+                <div class="glass-card trip-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <h3>{{ trip.title }}</h3>
+                        <span class="badge badge-{{ trip.status }}">{{ trip.get_status_display }}</span>
+                    </div>
+                    <p>{{ trip.description|truncatewords:20 }}</p>
+                    <div style="font-size: 0.85rem; color: var(--text-light); margin-top: auto;">
+                        <strong>Date:</strong> {{ trip.start_date|default:"TBD" }} to {{ trip.end_date|default:"TBD" }}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="glass-card empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+            <h2>No adventures yet!</h2>
+            <p>You haven't planned any trips. Get started by creating your first one.</p>
+            <br>
+            <a href="{% url 'trip_create' %}" class="btn">Plan a Trip</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

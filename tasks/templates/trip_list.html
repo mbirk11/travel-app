@@ -1,10 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}Explore Trips | Wanderlust{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>All Trips</h1>
+    <form class="search-bar" method="GET" action="{% url 'trip_list' %}">
+        <input type="text" name="q" placeholder="Search trips..." value="{{ request.GET.q }}">
+        <button type="submit" class="btn">Search</button>
+    </form>
+</div>
+
+{% if trips %}
+<div class="grid">
+    {% for trip in trips %}
+    <a href="{% url 'trip_detail' trip.pk %}" class="trip-link">
+        <div class="glass-card trip-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <h3>{{ trip.title }}</h3>
+                <span class="badge badge-{{ trip.status }}">{{ trip.get_status_display }}</span>
+            </div>
+            <p>{{ trip.description|truncatewords:20 }}</p>
+            <div style="font-size: 0.85rem; color: var(--text-light); margin-top: auto;">
+                <strong>Date:</strong> {{ trip.start_date|default:"TBD" }} to {{ trip.end_date|default:"TBD" }}<br>
+                <strong>Traveler:</strong> {{ trip.user.username }}
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="glass-card empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+    <h2>No trips found</h2>
+    <p>Try adjusting your search or create a new trip.</p>
+    <br>
+    <a href="{% url 'trip_create' %}" class="btn">Plan a New Trip</a>
+</div>
+{% endif %}
+{% endblock %}
